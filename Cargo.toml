@@ -1,0 +1,8 @@
+[package]
+name = "paths"
+version = "0.0.0"
+authors = ["Simon Ochsenreither <simon@ochsenreither.de>"]
+description = "Extensions for the directories crate."
+license     = "MPL-2.0"
+
+[dependencies]
