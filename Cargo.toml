@@ -6,3 +6,5 @@ description = "Extensions for the directories crate."
 license     = "MPL-2.0"
 
 [dependencies]
+serde = "1.0"
+serde_test = "1.0"
