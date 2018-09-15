@@ -1,5 +1,6 @@
 #[cfg(test)] extern crate serde_test;
 #[cfg(test)] use self::serde_test::{Token, assert_tokens};
+#[cfg(test)] use std::path::PathBuf;
 
 #[test]
 fn absolute_path_from_00_ok() {
@@ -133,6 +134,36 @@ fn absolute_path_serialize_03() {
 }
 
 #[test]
+fn absolute_path_serialize_04() {
+    let ser = ::AbsolutePath::from("/<CONFIG_DIR>/foo").unwrap();
+    assert_tokens(&ser, &[Token::String("/<CONFIG_DIR>/foo")]);
+}
+
+#[test]
+fn relative_path_serialize_00() {
+    let ser = ::RelativePath::from("/foo//bar///qux////").unwrap();
+    assert_tokens(&ser, &[Token::String("foo/bar/qux")]);
+}
+
+#[test]
+fn relative_path_serialize_01() {
+    let ser = ::RelativePath::from("foo//bar///qux////").unwrap();
+    assert_tokens(&ser, &[Token::String("foo/bar/qux")]);
+}
+
+#[test]
+fn relative_path_serialize_02() {
+    let ser = ::RelativePath::from("/").unwrap();
+    assert_tokens(&ser, &[Token::String("")]);
+}
+
+#[test]
+fn relative_path_serialize_03() {
+    let ser = ::RelativePath::from("").unwrap();
+    assert_tokens(&ser, &[Token::String("")]);
+}
+
+#[test]
 fn absolute_path_append_00() {
     let mut abs = ::AbsolutePath::from("foo").unwrap();
     let rel = ::RelativePath::from("bar").unwrap();
@@ -162,4 +193,11 @@ fn absolute_path_extend_01() {
     let rel = ::RelativePath::from("/qux//do///").unwrap();
     abs.extend(rel);
     assert!(abs == ::AbsolutePath::from("/foo/bar/qux/do").unwrap())
+}
+
+#[test]
+fn absolute_path_to_pathbuf_01() {
+    let mut home = ::AbsolutePath::home_dir();
+    home.extend(::RelativePath::from("foo/bar").unwrap());
+    assert!(home.to_pathbuf().unwrap() == PathBuf::from("/home/soc/foo/bar"));
 }
